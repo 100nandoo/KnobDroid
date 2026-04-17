@@ -1,0 +1,88 @@
+name: Android CI
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Production
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Cache Gradle and wrapper
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Increment versionCode and set versionName in libs.versions.toml
+        run: |
+          chmod +x ./update_version.sh
+          sh ./update_version.sh ${{ github.ref_name }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 🎊🎉 Release version ${{ github.ref_name }} 🎉🎊
+          branch: release/${{ github.ref_name }}
+          title: 🚀 Release ${{ github.ref_name }}
+          body: |
+            Automated version bump for release ${{ github.ref_name }}.
+          base: main
+
+      - name: Build with Gradle
+        run: ./gradlew :app:assembleRelease
+
+      - name: Sign app APK
+        uses: ilharp/sign-android-release@v2
+        id: sign_app
+        with:
+          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
+          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: List APK output
+        run: ls -al ./app/build/outputs/apk/release/
+
+      - name: Rename APK with tag name
+        run: |
+          mv ${{ steps.sign_app.outputs.signedFile }} ./app/build/outputs/apk/release/knobdroid-${{ github.ref_name }}.apk
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: knobdroid-${{ github.ref_name }}.apk
+          path: |
+            ./app/build/outputs/apk/release/
+
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: ./app/build/outputs/apk/release/knobdroid-${{ github.ref_name }}.apk
