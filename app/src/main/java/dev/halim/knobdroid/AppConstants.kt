@@ -2,6 +2,7 @@ package dev.halim.knobdroid
 
 object AppConstants {
   const val PREFS_NAME = "knobdroid_prefs"
+  const val MAX_VOLUME_HEX = 0x7FFF
 
   object PreferenceKeys {
     const val VOLUME_PERCENT = "volume_percent"

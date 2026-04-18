@@ -2,6 +2,7 @@ package dev.halim.knobdroid.usb
 
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
+import dev.halim.knobdroid.AppConstants
 
 object UsbHelper {
   private const val APPLE_VENDOR_ID = 0x5AC
@@ -23,5 +24,9 @@ object UsbHelper {
       connection.close()
       Pair(-1, "Error: ${e.message}")
     }
+  }
+
+  fun calculateVolumeHex(percent: Int): Int {
+    return (percent * AppConstants.MAX_VOLUME_HEX) / 100
   }
 }

@@ -1,7 +1,9 @@
 package dev.halim.knobdroid
 
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import dev.halim.knobdroid.ui.screen.UsbControlScreen
 import dev.halim.knobdroid.ui.theme.KnobDroidTheme
@@ -17,17 +20,6 @@ import dev.halim.knobdroid.usb.UsbVolumeService
 
 class MainActivity : ComponentActivity() {
   private lateinit var sharedPreferences: SharedPreferences
-
-  companion object {
-    init {
-      try {
-        System.loadLibrary("usbAndroidTest")
-        android.util.Log.d("MainActivity", "Native library loaded in companion init")
-      } catch (e: UnsatisfiedLinkError) {
-        android.util.Log.e("MainActivity", "Failed to load native library: ${e.message}", e)
-      }
-    }
-  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -63,6 +55,13 @@ class MainActivity : ComponentActivity() {
   }
 
   private fun startVolumeService(volumePercent: Int) {
+    if (
+      ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) !=
+        PackageManager.PERMISSION_GRANTED
+    ) {
+      return
+    }
+
     sharedPreferences.edit { putInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, volumePercent) }
 
     Intent(this, UsbVolumeService::class.java).apply {

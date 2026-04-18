@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">KnobDroid</string>
     <string name="volume_control_title">Volume Control</string>
-    <string name="volume_percent_format">Volume: %d%%</string>
+    <string name="volume_percent_format">%d%%</string>
     <string name="hex_value_label">Hex Value</string>
     <string name="auto_apply_label">Auto-apply on device connect</string>
     <string name="apply_volume_button">Apply Volume</string>
     <string name="device_status_checking">Checking for USB device...</string>
+    <string name="permission_required_title">Audio Permission Required</string>
+    <string name="permission_required_desc">This app needs access to record audio to monitor sound levels and adjust volume accordingly.</string>
+    <string name="grant_permission_button">Grant Permission</string>
 </resources>

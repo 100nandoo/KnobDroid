@@ -101,8 +101,7 @@ class UsbVolumeService : Service() {
   }
 
   private fun sendVolumeToDevice(fd: Int, volumePercent: Int) {
-    // Convert percentage (0-100) to hex value (0x0000-0xFFFF)
-    val hexValue = (volumePercent * 0xFFFF) / 100
+    val hexValue = UsbHelper.calculateVolumeHex(volumePercent)
     val lowByte = (hexValue and 0xFF).toByte()
     val highByte = ((hexValue shr 8) and 0xFF).toByte()
     val volumeBytes = byteArrayOf(lowByte, highByte)
