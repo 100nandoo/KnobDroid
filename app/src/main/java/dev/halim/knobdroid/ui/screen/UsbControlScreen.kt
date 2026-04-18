@@ -89,25 +89,20 @@ fun UsbControlScreen(
   DisposableEffect(androidContext) {
     val usbManager = androidContext.getSystemService(Context.USB_SERVICE) as UsbManager
 
+    fun updateDeviceName() {
+      val appleDongle = UsbHelper.findAppleDongle(usbManager)
+      deviceName.value =
+        when {
+          appleDongle != null -> appleDongleText
+          UsbHelper.hasAnyUsbDevice(usbManager) -> usbDetected
+          else -> deviceNoUsbText
+        }
+    }
+
     val receiver =
       object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-          val deviceList = usbManager.deviceList
-          val appleDongle = deviceList.values.find { UsbHelper.isAppleDongle(it) }
-          val anyDevice = deviceList.values.firstOrNull()
-
-          deviceName.value =
-            when {
-              appleDongle != null -> {
-                appleDongleText
-              }
-              anyDevice != null -> {
-                usbDetected
-              }
-              else -> {
-                deviceNoUsbText
-              }
-            }
+          updateDeviceName()
         }
       }
 
@@ -120,22 +115,7 @@ fun UsbControlScreen(
     androidContext.registerReceiver(receiver, filter)
 
     // Initial check
-    val deviceList = usbManager.deviceList
-    val appleDongle = deviceList.values.find { UsbHelper.isAppleDongle(it) }
-    val anyDevice = deviceList.values.firstOrNull()
-
-    deviceName.value =
-      when {
-        appleDongle != null -> {
-          appleDongleText
-        }
-        anyDevice != null -> {
-          usbDetected
-        }
-        else -> {
-          deviceNoUsbText
-        }
-      }
+    updateDeviceName()
 
     onDispose { androidContext.unregisterReceiver(receiver) }
   }
@@ -159,75 +139,91 @@ fun UsbControlScreen(
         modifier = Modifier.padding(bottom = 24.dp),
       )
 
-      Card(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
-        colors =
-          CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-          ),
-        shape = RoundedCornerShape(24.dp),
-      ) {
-        Column(
-          modifier = Modifier.padding(24.dp),
-          horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-          Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.Center) {
-            Text(
-              stringResource(R.string.volume_percent_format, volumePercent.intValue),
-              style = MaterialTheme.typography.displaySmall,
-              fontWeight = FontWeight.ExtraBold,
-              color = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-              text = "0x$hexString",
-              style = MaterialTheme.typography.labelLarge,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-              modifier = Modifier.padding(bottom = 6.dp),
-            )
+      VolumeCard(
+        volumePercent = volumePercent.intValue,
+        hexValue = hexString,
+        onVolumeChange = { newValue ->
+          volumePercent.intValue = (newValue * 100).roundToInt()
+          sharedPreferences.edit {
+            putInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, volumePercent.intValue)
           }
+        },
+      )
 
-          Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.height(16.dp))
 
-          Slider(
-            value = volumePercent.intValue.toFloat() / 100f,
-            onValueChange = { newValue ->
-              volumePercent.intValue = (newValue * 100).roundToInt()
-              sharedPreferences.edit {
-                putInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, volumePercent.intValue)
-              }
-            },
-            steps = 9,
-            modifier = Modifier.fillMaxWidth(),
-          )
-        }
+      ApplyButton(onClick = { onApplyVolume(volumePercent.intValue) })
+
+      Spacer(modifier = Modifier.weight(1f))
+
+      DeviceStatusText(deviceName.value)
+    }
+  }
+}
+
+@Composable
+private fun VolumeCard(volumePercent: Int, hexValue: String, onVolumeChange: (Float) -> Unit) {
+  Card(
+    modifier = Modifier.fillMaxWidth().padding(8.dp),
+    colors =
+      CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+      ),
+    shape = RoundedCornerShape(24.dp),
+  ) {
+    Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+      Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.Center) {
+        Text(
+          stringResource(R.string.volume_percent_format, volumePercent),
+          style = MaterialTheme.typography.displaySmall,
+          fontWeight = FontWeight.ExtraBold,
+          color = MaterialTheme.colorScheme.primary,
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+          text = stringResource(R.string.hex_prefix, hexValue),
+          style = MaterialTheme.typography.labelLarge,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.padding(bottom = 6.dp),
+        )
       }
 
       Spacer(modifier = Modifier.height(16.dp))
 
-      Button(
-        onClick = { onApplyVolume(volumePercent.intValue) },
-        modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 8.dp),
-        shape = RoundedCornerShape(16.dp),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
-      ) {
-        Text(
-          stringResource(R.string.apply_volume_button),
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Bold,
-        )
-      }
-
-      Spacer(modifier = Modifier.weight(1f))
-
-      Text(
-        deviceName.value,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(bottom = 16.dp),
+      Slider(
+        value = volumePercent.toFloat() / 100f,
+        onValueChange = onVolumeChange,
+        steps = 9,
+        modifier = Modifier.fillMaxWidth(),
       )
     }
   }
+}
+
+@Composable
+private fun ApplyButton(onClick: () -> Unit) {
+  Button(
+    onClick = onClick,
+    modifier = Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 8.dp),
+    shape = RoundedCornerShape(16.dp),
+    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+  ) {
+    Text(
+      stringResource(R.string.apply_volume_button),
+      style = MaterialTheme.typography.titleMedium,
+      fontWeight = FontWeight.Bold,
+    )
+  }
+}
+
+@Composable
+private fun DeviceStatusText(status: String) {
+  Text(
+    text = status,
+    style = MaterialTheme.typography.bodyMedium,
+    color = MaterialTheme.colorScheme.onSurfaceVariant,
+    modifier = Modifier.padding(bottom = 16.dp),
+  )
 }
 
 @Composable

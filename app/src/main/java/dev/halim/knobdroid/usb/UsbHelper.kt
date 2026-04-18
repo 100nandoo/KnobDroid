@@ -12,17 +12,32 @@ object UsbHelper {
     return device.vendorId == APPLE_VENDOR_ID && device.productId == APPLE_PRODUCT_ID
   }
 
-  fun connectDevice(device: UsbDevice, usbManager: UsbManager): Pair<Int, String> {
+  fun findAppleDongle(usbManager: UsbManager): UsbDevice? {
+    return usbManager.deviceList.values.find { isAppleDongle(it) }
+  }
+
+  fun hasAnyUsbDevice(usbManager: UsbManager): Boolean {
+    return usbManager.deviceList.isNotEmpty()
+  }
+
+  fun connectAndDo(
+    device: UsbDevice,
+    usbManager: UsbManager,
+    block: (Int) -> Unit,
+  ): Result<String> {
     val connection =
-      usbManager.openDevice(device) ?: return Pair(-1, "Failed to open USB connection")
+      usbManager.openDevice(device)
+        ?: return Result.failure(Exception("Failed to open USB connection"))
 
     return try {
       val fd = connection.fileDescriptor
       val deviceName = NativeUsbLib.initializeNativeDevice(fd)
-      Pair(fd, deviceName)
+      block(fd)
+      Result.success(deviceName)
     } catch (e: Exception) {
+      Result.failure(e)
+    } finally {
       connection.close()
-      Pair(-1, "Error: ${e.message}")
     }
   }
 

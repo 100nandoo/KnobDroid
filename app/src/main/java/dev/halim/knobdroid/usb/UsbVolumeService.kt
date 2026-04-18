@@ -12,6 +12,8 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import dev.halim.knobdroid.AppConstants
+import dev.halim.knobdroid.R
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -33,14 +35,14 @@ class UsbVolumeService : Service() {
 
   override fun onCreate() {
     super.onCreate()
-    usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
+    usbManager = getSystemService(USB_SERVICE) as UsbManager
     executorService = Executors.newSingleThreadExecutor()
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     registerUsbReceiver()
 
-    val volumePercent = intent?.getIntExtra("volume_percent", 50) ?: 50
+    val volumePercent = intent?.getIntExtra(AppConstants.PreferenceKeys.VOLUME_PERCENT, 50) ?: 50
 
     Log.d(TAG, "Service started - Device ABI: ${Build.SUPPORTED_ABIS.joinToString()}")
 
@@ -50,22 +52,25 @@ class UsbVolumeService : Service() {
         val device = findConnectedDongle()
         if (device != null) {
           Log.d(TAG, "Found dongle: ${device.deviceName}")
-          val (fd, name) = UsbHelper.connectDevice(device, usbManager)
-          if (fd >= 0) {
-            currentFileDescriptor = fd
-            Log.d(TAG, "Connected to device: $name")
-            sendVolumeToDevice(fd, volumePercent)
-          } else {
-            Log.e(TAG, "Failed to connect: $name")
-            showToast("Error: $name")
-          }
+          val result =
+            UsbHelper.connectAndDo(device, usbManager) { fd ->
+              currentFileDescriptor = fd // Optional: if you still need it elsewhere
+              sendVolumeToDevice(fd, volumePercent)
+            }
+
+          result
+            .onSuccess { name -> Log.d(TAG, "Connected to device and applied volume: $name") }
+            .onFailure { e ->
+              Log.e(TAG, "Failed to connect or apply volume", e)
+              showToast(getString(R.string.toast_error_prefix, e.message ?: "Unknown"))
+            }
         } else {
           Log.w(TAG, "Apple USB DAC not found")
-          showToast("Apple USB DAC not found")
+          showToast(getString(R.string.toast_apple_dac_not_found))
         }
       } catch (e: Exception) {
         Log.e(TAG, "Exception during volume transfer", e)
-        showToast("Error: ${e.message}")
+        showToast(getString(R.string.toast_error_prefix, e.message ?: "Unknown"))
       }
       stopSelf()
     }
@@ -91,13 +96,7 @@ class UsbVolumeService : Service() {
   }
 
   private fun findConnectedDongle(): UsbDevice? {
-    val devices = usbManager.deviceList
-    for ((_, device) in devices) {
-      if (UsbHelper.isAppleDongle(device)) {
-        return device
-      }
-    }
-    return null
+    return UsbHelper.findAppleDongle(usbManager)
   }
 
   private fun sendVolumeToDevice(fd: Int, volumePercent: Int) {
@@ -108,9 +107,9 @@ class UsbVolumeService : Service() {
 
     val result = NativeUsbLib.setDeviceVolume(fd, volumeBytes)
     if (result >= 0) {
-      showToast("Volume applied successfully")
+      showToast(getString(R.string.toast_volume_success))
     } else {
-      showToast("Error applying volume: error code $result")
+      showToast(getString(R.string.toast_volume_error, result))
     }
   }
 

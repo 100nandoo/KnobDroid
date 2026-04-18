@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
     sharedPreferences.edit { putInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, volumePercent) }
 
     Intent(this, UsbVolumeService::class.java).apply {
-      putExtra("volume_percent", volumePercent)
+      putExtra(AppConstants.PreferenceKeys.VOLUME_PERCENT, volumePercent)
       startService(this)
     }
   }
