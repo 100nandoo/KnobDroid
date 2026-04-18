@@ -41,7 +41,6 @@ class UsbVolumeService : Service() {
     registerUsbReceiver()
 
     val volumePercent = intent?.getIntExtra("volume_percent", 50) ?: 50
-    val autoApply = intent?.getBooleanExtra("auto_apply", false) ?: false
 
     Log.d(TAG, "Service started - Device ABI: ${Build.SUPPORTED_ABIS.joinToString()}")
 
@@ -58,7 +57,7 @@ class UsbVolumeService : Service() {
             sendVolumeToDevice(fd, volumePercent)
           } else {
             Log.e(TAG, "Failed to connect: $name")
-            showToast("Error: ${name}")
+            showToast("Error: $name")
           }
         } else {
           Log.w(TAG, "Apple USB DAC not found")

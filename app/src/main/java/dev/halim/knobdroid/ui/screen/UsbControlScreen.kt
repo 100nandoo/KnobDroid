@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -32,9 +31,6 @@ fun UsbControlScreen(
   val defaultStatusText = stringResource(R.string.device_status_checking)
   val volumePercent = remember {
     mutableIntStateOf(sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, 50))
-  }
-  val autoApply = remember {
-    mutableStateOf(sharedPreferences.getBoolean(AppConstants.PreferenceKeys.AUTO_APPLY, false))
   }
   val deviceName = remember { mutableStateOf(defaultStatusText) }
 
@@ -71,17 +67,6 @@ fun UsbControlScreen(
       },
       modifier = Modifier.fillMaxWidth().padding(8.dp),
     )
-
-    // Auto-apply checkbox
-    Checkbox(
-      checked = autoApply.value,
-      onCheckedChange = { newValue ->
-        autoApply.value = newValue
-        sharedPreferences.edit { putBoolean(AppConstants.PreferenceKeys.AUTO_APPLY, newValue) }
-      },
-      modifier = Modifier.padding(8.dp),
-    )
-    Text(stringResource(R.string.auto_apply_label), modifier = Modifier.padding(start = 8.dp))
 
     Button(
       onClick = { onApplyVolume(volumePercent.intValue) },

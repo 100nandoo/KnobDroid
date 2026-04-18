@@ -57,23 +57,17 @@ class MainActivity : ComponentActivity() {
 
   private fun handleUsbIntent(intent: Intent) {
     if (intent.action == AppConstants.IntentActions.USB_DEVICE_ATTACHED) {
-      val autoApply = sharedPreferences.getBoolean(AppConstants.PreferenceKeys.AUTO_APPLY, false)
-      if (autoApply) {
-        val volumePercent = sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, 50)
-        startVolumeService(volumePercent)
-      }
+      val volumePercent = sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, 50)
+      startVolumeService(volumePercent)
     }
   }
 
   private fun startVolumeService(volumePercent: Int) {
     sharedPreferences.edit { putInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, volumePercent) }
 
-    val intent = Intent(this, UsbVolumeService::class.java)
-    intent.putExtra("volume_percent", volumePercent)
-    intent.putExtra(
-      "auto_apply",
-      sharedPreferences.getBoolean(AppConstants.PreferenceKeys.AUTO_APPLY, false),
-    )
-    startService(intent)
+    Intent(this, UsbVolumeService::class.java).apply {
+      putExtra("volume_percent", volumePercent)
+      startService(this)
+    }
   }
 }
