@@ -1,8 +1,13 @@
 package dev.halim.knobdroid.ui.screen
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.hardware.usb.UsbManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -28,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,10 +63,10 @@ fun UsbControlScreen(
   sharedPreferences: SharedPreferences,
   onApplyVolume: (Int) -> Unit,
 ) {
-  val context = LocalContext.current
+  val androidContext = LocalContext.current
   var hasAudioPermission by remember {
     mutableStateOf(
-      ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) ==
+      ContextCompat.checkSelfPermission(androidContext, Manifest.permission.RECORD_AUDIO) ==
         PackageManager.PERMISSION_GRANTED
     )
   }
@@ -71,10 +77,68 @@ fun UsbControlScreen(
     }
 
   val defaultStatusText = stringResource(R.string.device_status_checking)
+  val deviceNoUsbText = stringResource(R.string.device_status_no_usb)
+  val appleDongleText = stringResource(R.string.us_apple_dongle)
+  val usbDetected = stringResource(R.string.usb_device_detected)
+
   val volumePercent = remember {
     mutableIntStateOf(sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, 50))
   }
   val deviceName = remember { mutableStateOf(defaultStatusText) }
+
+  DisposableEffect(androidContext) {
+    val usbManager = androidContext.getSystemService(Context.USB_SERVICE) as UsbManager
+
+    val receiver =
+      object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+          val deviceList = usbManager.deviceList
+          val appleDongle = deviceList.values.find { UsbHelper.isAppleDongle(it) }
+          val anyDevice = deviceList.values.firstOrNull()
+
+          deviceName.value =
+            when {
+              appleDongle != null -> {
+                appleDongleText
+              }
+              anyDevice != null -> {
+                usbDetected
+              }
+              else -> {
+                deviceNoUsbText
+              }
+            }
+        }
+      }
+
+    val filter =
+      IntentFilter().apply {
+        addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+        addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+      }
+
+    androidContext.registerReceiver(receiver, filter)
+
+    // Initial check
+    val deviceList = usbManager.deviceList
+    val appleDongle = deviceList.values.find { UsbHelper.isAppleDongle(it) }
+    val anyDevice = deviceList.values.firstOrNull()
+
+    deviceName.value =
+      when {
+        appleDongle != null -> {
+          appleDongleText
+        }
+        anyDevice != null -> {
+          usbDetected
+        }
+        else -> {
+          deviceNoUsbText
+        }
+      }
+
+    onDispose { androidContext.unregisterReceiver(receiver) }
+  }
 
   val hexValue = UsbHelper.calculateVolumeHex(volumePercent.intValue)
   val hexString = String.format("%04X", hexValue)

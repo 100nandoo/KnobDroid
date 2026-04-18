@@ -8,5 +8,9 @@
     <string name="device_status_checking">Checking for USB device...</string>
     <string name="permission_required_title">Audio Permission Required</string>
     <string name="permission_required_desc">This app needs access to record audio to monitor sound levels and adjust volume accordingly.</string>
+    <string name="device_status_found">US Apple Dongle</string>
+    <string name="us_apple_dongle">US Apple Dongle</string>
+    <string name="usb_device_detected">USB device detected but not US Apple Dongle</string>
+    <string name="device_status_no_usb">No USB device detected</string>
     <string name="grant_permission_button">Grant Permission</string>
 </resources>
