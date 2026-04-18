@@ -6,6 +6,7 @@ object AppConstants {
 
   object PreferenceKeys {
     const val VOLUME_PERCENT = "volume_percent"
+    const val DEFAULT_VOLUME_PERCENT = 100
   }
 
   object IntentActions {

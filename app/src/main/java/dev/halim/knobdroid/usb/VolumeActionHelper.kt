@@ -34,7 +34,7 @@ object VolumeActionHelper {
             return
         }
 
-        val volumePercent = requestedVolume ?: sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, 50)
+        val volumePercent = requestedVolume ?: sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, AppConstants.PreferenceKeys.DEFAULT_VOLUME_PERCENT)
         
         // Save volume if it was explicitly provided (manual apply)
         if (requestedVolume != null) {

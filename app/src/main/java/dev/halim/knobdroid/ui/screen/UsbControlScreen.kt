@@ -82,7 +82,7 @@ fun UsbControlScreen(
   val usbDetected = stringResource(R.string.usb_device_detected)
 
   val volumePercent = remember {
-    mutableIntStateOf(sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, 50))
+    mutableIntStateOf(sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, AppConstants.PreferenceKeys.DEFAULT_VOLUME_PERCENT))
   }
   val deviceName = remember { mutableStateOf(defaultStatusText) }
 
