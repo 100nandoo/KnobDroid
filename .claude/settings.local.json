@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(git remote *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(./gradlew build *)"
     ]
   }
 }
