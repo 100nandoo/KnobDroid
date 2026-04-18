@@ -1,4 +1,7 @@
-# KnobDroid 🎛️
+<h1 align="center">KnobDroid</h1>
+<p align="center">
+  <b>Automatic hardware volume fix for Apple USB-C Dongles (US Version) on Android</b>
+</p>
 
 <p align="center">
   <a href="https://github.com/100nandoo/KnobDroid/releases/latest">
@@ -12,10 +15,23 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="#-download"><b>Download</b></a> &bull;
+  <a href="#-features"><b>Features</b></a> &bull;
+  <a href="#-screenshots"><b>Screenshots</b></a> &bull;
+  <a href="#-setup"><b>Setup</b></a>
+</p>
+
 **KnobDroid** is a specialized Android utility designed to automatically set the hardware volume of USB Audio Class 2 (UAC2) DACs, specifically the **Apple USB-C to 3.5mm Headphone Jack Adapter**, to a preferred level whenever they are connected.
 
 > [!IMPORTANT]
 > **Automatic Trigger** - The hardware volume is automatically applied as soon as an Apple USB-C Dongle is detected, ensuring your audio is always at the perfect level without any manual intervention.
+
+## 📸 Screenshots
+
+| Not Detected | Apple Dongle Detected | Volume Applied |
+| :---: | :---: | :---: |
+| <img src="screenshots/not-detected.png" width="250"> | <img src="screenshots/dongle.png" width="250"> | <img src="screenshots/applied.png" width="250"> |
 
 ## 📥 Download
 
@@ -50,12 +66,6 @@ KnobDroid listens for USB connection events. When an Apple DAC (or other compati
 - **Customizable Volume**: Simple UI to set your preferred default volume.
 - **Modern UI**: Built with Jetpack Compose for a sleek, responsive experience.
 - **Broad Compatibility**: Works with Apple USB-C DACs and other UAC2-compliant audio devices.
-
-## 📸 Screenshots
-
-| Not Detected | Apple Dongle Detected | Volume Applied |
-| :---: | :---: | :---: |
-| <img src="screenshots/not-detected.png" width="250"> | <img src="screenshots/dongle.png" width="250"> | <img src="screenshots/applied.png" width="250"> |
 
 ## 🚀 Setup
 1. **Initial Configuration**: Open the app and set your preferred hardware volume (100% recommended).
