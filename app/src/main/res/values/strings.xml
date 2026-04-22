@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">KnobDroid</string>
     <string name="volume_control_title">Volume Control</string>
-    <string name="volume_percent_format">%d%%</string>
-    <string name="hex_value_label">Hex Value</string>
-    <string name="auto_apply_label">Auto-apply on device connect</string>
-    <string name="apply_volume_button">Apply Volume</string>
+    <string name="volume_on">On</string>
+    <string name="volume_off">Off</string>
+    <string name="apply_volume_fix">Apply Volume Fix</string>
     <string name="device_status_checking">Checking for USB device…</string>
     <string name="permission_required_title">Audio Permission Required</string>
     <string name="permission_required_desc">This app needs access to record audio to monitor sound levels and adjust volume accordingly.</string>
@@ -16,5 +15,4 @@
     <string name="toast_apple_dac_not_found">Apple USB DAC not found</string>
     <string name="toast_volume_success">Volume applied successfully</string>
     <string name="toast_volume_error">Error applying volume: error code %d</string>
-    <string name="hex_prefix">0x%s</string>
 </resources>

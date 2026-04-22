@@ -5,8 +5,8 @@ object AppConstants {
   const val MAX_VOLUME_HEX = 0x7FFF
 
   object PreferenceKeys {
-    const val VOLUME_PERCENT = "volume_percent"
-    const val DEFAULT_VOLUME_PERCENT = 100
+    const val VOLUME_ENABLED = "volume_enabled"
+    const val DEFAULT_VOLUME_ENABLED = true
   }
 
   object IntentActions {

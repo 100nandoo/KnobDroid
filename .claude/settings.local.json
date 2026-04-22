@@ -3,7 +3,12 @@
     "allow": [
       "Bash(git remote *)",
       "Bash(git add *)",
-      "Bash(./gradlew build *)"
+      "Bash(./gradlew build *)",
+      "mcp__mobile-mcp__mobile_list_available_devices",
+      "Bash(./gradlew installDebug)",
+      "mcp__mobile-mcp__mobile_launch_app",
+      "mcp__mobile-mcp__mobile_take_screenshot",
+      "Bash(./gradlew assembleDebug)"
     ]
   }
 }

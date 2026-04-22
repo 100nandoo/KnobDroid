@@ -34,11 +34,13 @@ object VolumeActionHelper {
             return
         }
 
-        val volumePercent = requestedVolume ?: sharedPreferences.getInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, AppConstants.PreferenceKeys.DEFAULT_VOLUME_PERCENT)
-        
-        // Save volume if it was explicitly provided (manual apply)
+        val volumePercent = requestedVolume ?: run {
+            val enabled = sharedPreferences.getBoolean(AppConstants.PreferenceKeys.VOLUME_ENABLED, AppConstants.PreferenceKeys.DEFAULT_VOLUME_ENABLED)
+            if (enabled) 100 else 0
+        }
+
         if (requestedVolume != null) {
-            sharedPreferences.edit { putInt(AppConstants.PreferenceKeys.VOLUME_PERCENT, volumePercent) }
+            sharedPreferences.edit { putBoolean(AppConstants.PreferenceKeys.VOLUME_ENABLED, volumePercent == 100) }
         }
 
         executor.execute {
