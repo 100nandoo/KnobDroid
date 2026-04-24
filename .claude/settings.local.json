@@ -8,7 +8,8 @@
       "Bash(./gradlew installDebug)",
       "mcp__mobile-mcp__mobile_launch_app",
       "mcp__mobile-mcp__mobile_take_screenshot",
-      "Bash(./gradlew assembleDebug)"
+      "Bash(./gradlew assembleDebug)",
+      "mcp__context7__resolve-library-id"
     ]
   }
 }

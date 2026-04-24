@@ -11,7 +11,7 @@ android {
 
   defaultConfig {
     applicationId = "dev.halim.knobdroid"
-    minSdk = 28
+    minSdk = 29
     targetSdk = 36
     versionCode = libs.versions.versionCode.get().toInt()
     versionName = libs.versions.versionName.get()
@@ -32,7 +32,10 @@ android {
     targetCompatibility = JavaVersion.VERSION_21
   }
 
-  buildFeatures { compose = true }
+  buildFeatures {
+    compose = true
+    buildConfig = true
+  }
 
   externalNativeBuild {
     cmake {
@@ -51,6 +54,8 @@ dependencies {
   implementation(libs.androidx.compose.ui.graphics)
   implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.compose.material3)
+  implementation(libs.acra.core)
+  implementation(libs.acra.toast)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)

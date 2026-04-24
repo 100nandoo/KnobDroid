@@ -15,4 +15,5 @@
     <string name="toast_apple_dac_not_found">Apple USB DAC not found</string>
     <string name="toast_volume_success">Volume applied successfully</string>
     <string name="toast_volume_error">Error applying volume: error code %d</string>
+    <string name="crash_toast_text">KnobDroid crashed. Report saved to Downloads/KnobDroid.</string>
 </resources>
