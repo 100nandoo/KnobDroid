@@ -1,6 +1,6 @@
 <h1 align="center">KnobDroid</h1>
 <p align="center">
-  <b>Automatic hardware volume fix for Apple USB-C Dongles (US Version) on Android</b>
+  <b>Fixes low volume on the Apple USB-C dongle on Android</b>
 </p>
 
 <p align="center">
@@ -16,27 +16,35 @@
 </p>
 
 <p align="center">
-  <a href="#-download"><b>Download</b></a> &bull;
-  <a href="#-features"><b>Features</b></a> &bull;
-  <a href="#-screenshots"><b>Screenshots</b></a> &bull;
-  <a href="#-setup"><b>Setup</b></a>
+  <a href="#download"><b>Download</b></a> &bull;
+  <a href="#what-it-does"><b>What it does</b></a> &bull;
+  <a href="#screenshots"><b>Screenshots</b></a> &bull;
+  <a href="#setup"><b>Setup</b></a>
 </p>
 
-**KnobDroid** is a specialized Android utility designed to automatically send a hardware on/off command to USB Audio Class 2 (UAC2) DACs, specifically the **Apple USB-C to 3.5mm Headphone Jack Adapter**, whenever they are connected.
+KnobDroid is a small Android app for one specific problem: the Apple USB-C to 3.5 mm headphone adapter can sound much quieter on Android than it should. This app listens for the dongle, asks for USB access, and sends the hardware command needed to apply the volume fix automatically.
+
+I built it for the US version of the Apple dongle, but it may also work with other UAC2 DACs that respond to the same command.
 
 > [!IMPORTANT]
-> **Automatic Trigger** - The hardware volume is automatically applied as soon as an Apple USB-C Dongle is detected, ensuring your audio is always at the perfect level without any manual intervention.
+> Once setup is done, the fix runs automatically when the dongle is connected. You do not need to open the app every time.
 
-## 📸 Screenshots
+## Screenshots
 
-| <img src="images/marketing/phone/01-hero-android-portrait-1080x1920.png" width="250"> | <img src="images/marketing/phone/02-quiet-dongles-android-portrait-1080x1920.png" width="250"> | <img src="images/marketing/phone/03-auto-detect-android-portrait-1080x1920.png" width="250"> |
+<details>
+  <summary>expand</summary>
+  <br>
 
-## 📥 Download
+<img src="images/marketing/phone/01-hero-android-portrait-1080x1920.png" width="250"> | <img src="images/marketing/phone/02-quiet-dongles-android-portrait-1080x1920.png" width="250"><img src="images/marketing/phone/03-auto-detect-android-portrait-1080x1920.png" width="250">
+
+</details>
+
+## Download
 
 <p align="center">
   <table align="center">
     <tr>
-      <td align="center"><b>Stable Release</b></td>
+      <td align="center"><b>Stable release</b></td>
     </tr>
     <tr>
       <td align="center">
@@ -48,61 +56,59 @@
   </table>
 </p>
 
-## 🚀 The Problem
+## What it does
 
-When using the Apple USB-C dongle on Android devices, users often experience significantly lower volume compared to other platforms. This is because Android doesn't always correctly initialize the DAC's internal hardware volume mixer, often defaulting it to a low value.
+On some Android phones, the Apple USB-C dongle starts with a low hardware volume level. Android audio controls alone do not always fix that, because the problem is inside the DAC.
 
-## ✨ The Solution
+KnobDroid watches for the device and, when it appears, it:
 
-KnobDroid listens for USB connection events. When an Apple DAC (or other compatible UAC2 devices) is plugged in, it automatically:
+1. Detects the dongle.
+2. Requests the USB permission it needs.
+3. Sends the UAC2 hardware command.
+4. Finishes quietly in the background.
 
-1. Detects the device.
-2. Requests necessary USB permissions.
-3. Sends the DAC's hardware on/off command via the UAC2 protocol.
-4. Operates silently in the background, so you don't have to manually open the app every time.
+## Features
 
-## 🛠 Features
+- Automatically runs when the supported device is attached
+- Sends a simple hardware on or off command without extra setup
+- Stays out of the way after the command is applied
+- Built with Jetpack Compose
+- Focused on the US Apple USB-C to 3.5 mm headphone adapter
 
-- **Automatic Trigger**: Automatically sends the configured hardware command when the device is attached.
-- **Silent Mode**: Lightweight activity handles the hardware action without cluttering your screen.
-- **Simple Control**: Straightforward on/off behavior without extra setup complexity.
-- **Modern UI**: Built with Jetpack Compose for a sleek, responsive experience.
-- **Targeted Support**: Built specifically for the US version of the Apple USB-C to 3.5mm Headphone Jack Adapter.
+## Setup
 
-## 🚀 Setup
+1. Open the app once and choose whether the hardware command should be on or off.
+2. Approve the USB and audio permission prompts. If Android asks, choose "Always open KnobDroid" so it can handle the dongle automatically.
+3. Plug in the DAC. A toast confirms when the command has been applied.
 
-1. **Initial Configuration**: Open the app and choose whether the hardware command should be on or off.
-2. **Grant Permissions**: Approve the USB and Audio permission requests. Select **"Always open KnobDroid"** to enable automatic background processing.
-3. **Connect**: Plug in your DAC. A toast notification will confirm when the hardware command is successfully applied.
-
-## 🛠️ Building from Source
+## Building from source
 
 ```bash
 git clone https://github.com/100nandoo/KnobDroid.git
 ```
 
-1. Open the project in **Android Studio** (2024.1.1+).
-2. Ensure **NDK** and **CMake** are installed via the SDK Manager.
-3. Build and deploy to your device.
+1. Open the project in Android Studio 2024.1.1 or newer.
+2. Install the NDK and CMake from the SDK Manager.
+3. Build and run it on your device.
 
-## 📋 Requirements
+## Requirements
 
 - Android 9.0 (API 28) or higher
-- A UAC2-compliant USB DAC (e.g., Apple USB-C to 3.5mm Adapter)
+- A UAC2-compliant USB DAC, such as the Apple USB-C to 3.5 mm adapter
 
-## 🛠️ Tech Stack
+## Tech stack
 
-- **Language**: Kotlin
-- **UI**: Jetpack Compose
-- **Native**: C++ (JNI) for direct USB hardware communication
+- Kotlin
+- Jetpack Compose
+- C++ and JNI for direct USB communication
 
-## 🙏 Credits
+## Credits
 
-- Inspired by and built on prior work from [ibaiGorordo/libusbAndroidTest](https://github.com/ibaiGorordo/libusbAndroidTest) and [polhdez/usbDacVolumeAndroid](https://github.com/polhdez/usbDacVolumeAndroid).
+This project builds on earlier work from [ibaiGorordo/libusbAndroidTest](https://github.com/ibaiGorordo/libusbAndroidTest) and [polhdez/usbDacVolumeAndroid](https://github.com/polhdez/usbDacVolumeAndroid).
 
-## 📜 License
+## License
 
-KnobDroid is open-source software licensed under the **GNU General Public License v3.0**.
+KnobDroid is open source under the GNU General Public License v3.0.
 
 ---
 
