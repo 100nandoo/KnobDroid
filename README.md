@@ -29,9 +29,9 @@
 
 ## 📸 Screenshots
 
-| Not Detected | Apple Dongle Detected | Volume Applied |
+| Hero | Quiet Dongles | Auto Detect |
 | :---: | :---: | :---: |
-| <img src="screenshots/not-detected.png" width="250"> | <img src="screenshots/dongle.png" width="250"> | <img src="screenshots/applied.png" width="250"> |
+| <img src="images/marketing/phone/01-hero-android-portrait-1080x1920.png" width="250"> | <img src="images/marketing/phone/02-quiet-dongles-android-portrait-1080x1920.png" width="250"> | <img src="images/marketing/phone/03-auto-detect-android-portrait-1080x1920.png" width="250"> |
 
 ## 📥 Download
 
