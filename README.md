@@ -96,6 +96,10 @@ git clone https://github.com/100nandoo/KnobDroid.git
 - **UI**: Jetpack Compose
 - **Native**: C++ (JNI) for direct USB hardware communication
 
+## 🙏 Credits
+
+- Inspired by and built on prior work from [ibaiGorordo/libusbAndroidTest](https://github.com/ibaiGorordo/libusbAndroidTest) and [polhdez/usbDacVolumeAndroid](https://github.com/polhdez/usbDacVolumeAndroid).
+
 ## 📜 License
 
 KnobDroid is open-source software licensed under the **GNU General Public License v3.0**.
