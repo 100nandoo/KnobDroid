@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f5f4;
+  --foreground: #10281c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-poppins);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), sans-serif;
+}
+
+button,
+select {
+  font: inherit;
+}
