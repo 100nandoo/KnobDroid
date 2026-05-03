@@ -20,3 +20,5 @@
 .cxx
 local.properties
 keystore.properties
+app/src/main/assets/adi-registration.properties
+app/release/

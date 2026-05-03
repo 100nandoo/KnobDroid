@@ -1,3 +1,5 @@
+import java.util.Properties
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,6 +10,26 @@ plugins {
 android {
   namespace = "dev.halim.knobdroid"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
+
+  signingConfigs {
+    val keystorePropertiesFile =
+      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        file("..\\..\\signing\\keystore.properties")
+      } else {
+        file("../../signing/keystore.properties")
+      }
+
+    if (keystorePropertiesFile.exists()) {
+      val properties = Properties().apply { load(keystorePropertiesFile.inputStream()) }
+
+      create("release") {
+        storePassword = properties.getProperty("storePassword")
+        keyPassword = properties.getProperty("keyPassword")
+        keyAlias = properties.getProperty("keyAlias")
+        storeFile = rootProject.file(properties.getProperty("storeFile"))
+      }
+    }
+  }
 
   defaultConfig {
     applicationId = "dev.halim.knobdroid"
@@ -23,7 +45,7 @@ android {
     release {
       isMinifyEnabled = true
       isShrinkResources = true
-      signingConfig = signingConfigs["debug"]
+      signingConfig = signingConfigs.getByName("release")
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
@@ -54,8 +76,12 @@ dependencies {
   implementation(libs.androidx.compose.ui.graphics)
   implementation(libs.androidx.compose.ui.tooling.preview)
   implementation(libs.androidx.compose.material3)
-  implementation(libs.acra.core)
-  implementation(libs.acra.toast)
+  implementation(libs.acra.core) {
+    exclude(group = "com.google.auto.service", module = "auto-service")
+  }
+  implementation(libs.acra.toast) {
+    exclude(group = "com.google.auto.service", module = "auto-service")
+  }
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
