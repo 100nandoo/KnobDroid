@@ -19,7 +19,8 @@
   <a href="#download"><b>Download</b></a> &bull;
   <a href="#what-it-does"><b>What it does</b></a> &bull;
   <a href="#screenshots"><b>Screenshots</b></a> &bull;
-  <a href="#setup"><b>Setup</b></a>
+  <a href="#setup"><b>Setup</b></a> &bull;
+  <a href="#star-history"><b>Star History</b></a>
 </p>
 
 KnobDroid is a small Android app for one specific problem: the Apple USB-C to 3.5 mm headphone adapter can sound much quieter on Android than it should. This app listens for the dongle, asks for USB access, and sends the hardware command needed to apply the volume fix automatically.
@@ -105,6 +106,10 @@ git clone https://github.com/100nandoo/KnobDroid.git
 ## Credits
 
 This project builds on earlier work from [ibaiGorordo/libusbAndroidTest](https://github.com/ibaiGorordo/libusbAndroidTest) and [polhdez/usbDacVolumeAndroid](https://github.com/polhdez/usbDacVolumeAndroid).
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=100nandoo/KnobDroid&type=Date)](https://star-history.com/#100nandoo/KnobDroid&Date)
 
 ## License
 
