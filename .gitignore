@@ -1,6 +1,7 @@
 *.iml
 .gradle
 .kotlin/
+/.codebase-memory/
 /local.properties
 /.idea/caches
 /.idea/libraries
