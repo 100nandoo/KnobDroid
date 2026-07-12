@@ -1,6 +1,15 @@
 import java.util.Properties
-import org.apache.tools.ant.taskdefs.condition.Os
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+fun Project.findSigningPropertiesFile(): File? =
+  listOf("../signing/keystore.properties", "../../signing/keystore.properties")
+    .map(::file)
+    .firstOrNull(File::exists)
+
+fun File.resolveFromParent(path: String): File {
+  val candidate = File(path)
+  return if (candidate.isAbsolute) candidate else parentFile.resolve(path).normalize()
+}
 
 plugins {
   alias(libs.plugins.android.application)
@@ -12,21 +21,15 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   signingConfigs {
-    val keystorePropertiesFile =
-      if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        file("..\\..\\signing\\keystore.properties")
-      } else {
-        file("../../signing/keystore.properties")
-      }
-
-    if (keystorePropertiesFile.exists()) {
+    val keystorePropertiesFile = project.findSigningPropertiesFile()
+    if (keystorePropertiesFile != null) {
       val properties = Properties().apply { load(keystorePropertiesFile.inputStream()) }
 
       create("release") {
         storePassword = properties.getProperty("storePassword")
         keyPassword = properties.getProperty("keyPassword")
         keyAlias = properties.getProperty("keyAlias")
-        storeFile = rootProject.file(properties.getProperty("storeFile"))
+        storeFile = keystorePropertiesFile.resolveFromParent(properties.getProperty("storeFile"))
       }
     }
   }
@@ -45,7 +48,9 @@ android {
     release {
       isMinifyEnabled = true
       isShrinkResources = true
-      signingConfig = signingConfigs.getByName("release")
+      if (signingConfigs.names.contains("release")) {
+        signingConfig = signingConfigs.getByName("release")
+      }
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
