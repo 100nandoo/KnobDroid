@@ -1,0 +1,1 @@
+Restores proper hardware volume on the Apple USB-C audio dongle on Android.

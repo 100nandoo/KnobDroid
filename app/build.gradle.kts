@@ -1,6 +1,22 @@
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+val appVersionPropertiesFile = rootProject.file("app/version.properties")
+val appVersionProperties =
+  Properties().apply {
+    check(appVersionPropertiesFile.exists()) {
+      "Missing app version properties file: ${appVersionPropertiesFile.path}"
+    }
+    appVersionPropertiesFile.inputStream().use(::load)
+  }
+
+fun Properties.requiredInt(name: String): Int =
+  getProperty(name)?.toIntOrNull() ?: error("Missing integer property '$name' in app/version.properties")
+
+fun Properties.requiredString(name: String): String =
+  getProperty(name)?.trim()?.takeIf(String::isNotBlank)
+    ?: error("Missing string property '$name' in app/version.properties")
+
 fun Project.findSigningPropertiesFile(): File? =
   listOf("../signing/keystore.properties", "../../signing/keystore.properties")
     .map(::file)
@@ -38,8 +54,8 @@ android {
     applicationId = "dev.halim.knobdroid"
     minSdk = 29
     targetSdk = 36
-    versionCode = libs.versions.versionCode.get().toInt()
-    versionName = libs.versions.versionName.get()
+    versionCode = appVersionProperties.requiredInt("VERSION_CODE")
+    versionName = appVersionProperties.requiredString("VERSION_NAME")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

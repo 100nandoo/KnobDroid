@@ -1,7 +1,4 @@
 [versions]
-versionCode = "1"
-versionName = "1.0"
-
 agp = "9.1.1"
 coreKtx = "1.18.0"
 junit = "4.13.2"
@@ -37,4 +34,3 @@ acra-toast = { group = "ch.acra", name = "acra-toast", version.ref = "acra" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-

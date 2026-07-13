@@ -1,0 +1,14 @@
+KnobDroid fixes a specific Android audio problem: some phones drive the Apple USB-C to 3.5 mm headphone adapter at a much lower hardware volume than expected.
+
+The app watches for the dongle, requests USB permission when needed, and sends the hardware control command that restores normal output level.
+
+Features:
+- Detects the supported USB DAC automatically
+- Applies the hardware volume fix after permission is granted
+- Runs quietly in the background after setup
+- Built with Jetpack Compose
+
+Notes:
+- Built primarily for the US Apple USB-C to 3.5 mm adapter
+- May work with other UAC2 DACs that respond to the same command
+- Requires a compatible USB audio dongle and Android device support
