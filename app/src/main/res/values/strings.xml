@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">KnobDroid</string>
-    <string name="volume_control_title">Volume Control</string>
-    <string name="volume_on">On</string>
-    <string name="volume_off">Off</string>
     <string name="apply_volume_fix">Apply Volume Fix</string>
     <string name="device_status_checking">Checking for USB device…</string>
     <string name="permission_required_title">Audio Permission Required</string>
@@ -16,4 +13,5 @@
     <string name="toast_volume_success">Volume applied successfully</string>
     <string name="toast_volume_error">Error applying volume: error code %d</string>
     <string name="crash_toast_text">KnobDroid crashed. Report saved to Downloads/KnobDroid.</string>
+    <string name="auto_apply">Auto apply</string>
 </resources>
