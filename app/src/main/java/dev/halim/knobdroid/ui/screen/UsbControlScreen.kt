@@ -42,6 +42,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import dev.halim.knobdroid.AppConstants
 import dev.halim.knobdroid.R
+import dev.halim.knobdroid.ui.PreviewSurface
 import dev.halim.knobdroid.ui.theme.KnobDroidTheme
 import dev.halim.knobdroid.usb.UsbHelper
 
@@ -195,15 +196,6 @@ private fun DeviceStatusText(status: String) {
     style = MaterialTheme.typography.bodyLarge,
     modifier = Modifier.padding(bottom = 16.dp),
   )
-}
-
-@Composable
-private fun PreviewSurface(content: @Composable () -> Unit) {
-  KnobDroidTheme {
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
-      content()
-    }
-  }
 }
 
 @Preview(showBackground = true)

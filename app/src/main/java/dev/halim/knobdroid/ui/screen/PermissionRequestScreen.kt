@@ -30,12 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.halim.knobdroid.R
-import dev.halim.knobdroid.ui.theme.KnobDroidTheme
+import dev.halim.knobdroid.ui.PreviewSurface
 
 @Composable
 fun PermissionRequestScreen(onGrantClick: () -> Unit) {
   Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-    // Background gradient for a premium look
     Box(
       modifier =
         Modifier.fillMaxSize()
@@ -113,5 +112,5 @@ fun PermissionRequestScreen(onGrantClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun PreviewPermissionRequestScreen() {
-  KnobDroidTheme { PermissionRequestScreen(onGrantClick = {}) }
+  PreviewSurface { PermissionRequestScreen(onGrantClick = {}) }
 }
