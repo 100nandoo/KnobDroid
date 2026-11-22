@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: true
 
       - name: Set up JDK
         uses: actions/setup-java@v6

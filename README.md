@@ -85,11 +85,11 @@ KnobDroid watches for the device and, when it appears, it:
 ## Building from source
 
 ```bash
-git clone https://github.com/100nandoo/KnobDroid.git
+git clone --recurse-submodules https://github.com/100nandoo/KnobDroid.git
 ```
 
 1. Open the project in Android Studio 2024.1.1 or newer.
-2. Install the NDK and CMake from the SDK Manager.
+2. Install NDK `28.2.13676358` and CMake `3.22.1` from the SDK Manager.
 3. Build and run it on your device.
 
 ## Requirements

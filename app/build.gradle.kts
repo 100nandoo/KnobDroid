@@ -35,6 +35,7 @@ plugins {
 android {
   namespace = "dev.halim.knobdroid"
   compileSdk { version = release(37) }
+  ndkVersion = "28.2.13676358"
 
   signingConfigs {
     val keystorePropertiesFile = project.findSigningPropertiesFile()
@@ -78,6 +79,13 @@ android {
   buildFeatures {
     compose = true
     buildConfig = true
+  }
+
+  externalNativeBuild {
+    cmake {
+      path = file("src/main/cpp/CMakeLists.txt")
+      version = "3.22.1"
+    }
   }
 }
 
