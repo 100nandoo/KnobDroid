@@ -34,7 +34,7 @@ plugins {
 
 android {
   namespace = "dev.halim.knobdroid"
-  compileSdk { version = release(36) { minorApiLevel = 1 } }
+  compileSdk { version = release(37) }
 
   signingConfigs {
     val keystorePropertiesFile = project.findSigningPropertiesFile()
