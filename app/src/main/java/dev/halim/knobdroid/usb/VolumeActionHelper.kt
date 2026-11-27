@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.hardware.usb.UsbManager
+import android.media.AudioManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -43,9 +44,21 @@ object VolumeActionHelper {
             sharedPreferences.edit { putBoolean(AppConstants.PreferenceKeys.VOLUME_ENABLED, volumePercent == 100) }
         }
 
+        val appContext = context.applicationContext
+        val audioManager = appContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
         executor.execute {
+            val busyReason = AudioIdleProbe.awaitQuiet(audioManager)
+            if (busyReason != null) {
+                Log.w(TAG, "Not applying volume, audio busy: $busyReason")
+                mainHandler.post {
+                    showToast(appContext, appContext.getString(R.string.toast_audio_busy, busyReason))
+                    onComplete()
+                }
+                return@execute
+            }
+
             val result = VolumeController.execute(usbManager, volumePercent)
-            val appContext = context.applicationContext
 
             mainHandler.post {
                 when (result) {

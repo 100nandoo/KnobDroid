@@ -20,20 +20,24 @@ object UsbHelper {
     return usbManager.deviceList.isNotEmpty()
   }
 
-  fun connectAndDo(
+  fun <T> connectAndDo(
     device: UsbDevice,
     usbManager: UsbManager,
-    block: (Int) -> Unit,
-  ): Result<String> {
+    block: (Int) -> T,
+  ): Result<T> {
     val connection =
       usbManager.openDevice(device)
-        ?: return Result.failure(Exception("Failed to open USB connection"))
+        ?: return Result.failure(
+          Exception("Failed to open USB connection (check USB and microphone permission)")
+        )
 
     return try {
       val fd = connection.fileDescriptor
-      val deviceName = NativeUsbLib.initializeNativeDevice(fd)
-      block(fd)
-      Result.success(deviceName)
+      if (fd < 0) {
+        Result.failure(Exception("Invalid USB file descriptor: $fd"))
+      } else {
+        Result.success(block(fd))
+      }
     } catch (e: Exception) {
       Result.failure(e)
     } finally {
@@ -41,7 +45,13 @@ object UsbHelper {
     }
   }
 
-  fun calculateVolumeHex(percent: Int): Int {
-    return (percent * AppConstants.MAX_VOLUME_HEX) / 100
+  /**
+   * Maps 0..100 % onto the adapter's hardware volume in 1/256 dB units: 100 % is the hardware
+   * maximum (0 dB), 0 % is the adapter's stock power-on level (-20 dB).
+   */
+  fun volumePercentToRaw(percent: Int): Int {
+    val clamped = percent.coerceIn(0, 100)
+    val stock = AppConstants.VOLUME_RAW_STOCK
+    return stock + ((AppConstants.VOLUME_RAW_MAX - stock) * clamped) / 100
   }
 }

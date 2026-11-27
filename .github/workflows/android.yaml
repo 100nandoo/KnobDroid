@@ -18,7 +18,6 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-          submodules: true
 
       - name: Set up JDK
         uses: actions/setup-java@v6
