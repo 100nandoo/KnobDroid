@@ -85,7 +85,7 @@ KnobDroid watches for the device and, when it appears, it:
 ## Building from source
 
 ```bash
-git clone --recurse-submodules https://github.com/100nandoo/KnobDroid.git
+git clone https://github.com/100nandoo/KnobDroid.git
 ```
 
 1. Open the project in Android Studio 2024.1.1 or newer.

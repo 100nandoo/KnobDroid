@@ -17,48 +17,39 @@ object VolumeController {
         return try {
             Log.d(TAG, "Starting USB volume apply")
             val device = UsbHelper.findAppleDongle(usbManager)
-            if (device != null) {
-                Log.d(TAG, "Found dongle: ${device.deviceName}")
-                var volResult: Result = Result.Error("Unknown error")
-                
-                val connectionResult = UsbHelper.connectAndDo(device, usbManager) { fd ->
-                    val status = sendVolumeToDevice(fd, volumePercent)
-                    volResult = if (status >= 0) {
-                        Result.Success("") // Temporary, will be filled from connectionResult
-                    } else {
-                        Result.VolumeError(status)
-                    }
-                }
-
-                connectionResult.fold(
-                    onSuccess = { deviceName ->
-                        if (volResult is Result.Success) {
-                            Result.Success(deviceName)
-                        } else {
-                            volResult
-                        }
-                    },
-                    onFailure = { e ->
-                        Log.e(TAG, "Failed to connect or apply volume", e)
-                        Result.Error(e.message ?: "Unknown")
-                    }
-                )
-            } else {
+            if (device == null) {
                 Log.w(TAG, "Apple USB DAC not found")
-                Result.DeviceNotFound
+                return Result.DeviceNotFound
             }
+            Log.d(TAG, "Found dongle: ${device.deviceName}")
+
+            val targetRaw = UsbHelper.volumePercentToRaw(volumePercent)
+            UsbHelper.connectAndDo(device, usbManager) { fd ->
+                NativeUsbLib.applyVolume(fd, targetRaw)
+            }.fold(
+                onSuccess = { applyResult ->
+                    Log.d(TAG, "Native apply log:\n${applyResult.log}")
+                    if (applyResult.writeSucceeded) {
+                        Log.d(
+                            TAG,
+                            "Applied raw=${applyResult.targetRaw} readback " +
+                                "L=${applyResult.postLeftRaw} R=${applyResult.postRightRaw} " +
+                                "reattach=${applyResult.connect0Rc}"
+                        )
+                        Result.Success(device.productName ?: device.deviceName)
+                    } else {
+                        Log.e(TAG, "Volume write failed, errno=${applyResult.failureErrno}")
+                        Result.VolumeError(applyResult.failureErrno)
+                    }
+                },
+                onFailure = { e ->
+                    Log.e(TAG, "Failed to connect or apply volume", e)
+                    Result.Error(e.message ?: "Unknown")
+                }
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Exception during volume apply", e)
             Result.Error(e.message ?: "Unknown")
         }
-    }
-
-    fun sendVolumeToDevice(fd: Int, volumePercent: Int): Int {
-        val hexValue = UsbHelper.calculateVolumeHex(volumePercent)
-        val lowByte = (hexValue and 0xFF).toByte()
-        val highByte = ((hexValue shr 8) and 0xFF).toByte()
-        val volumeBytes = byteArrayOf(lowByte, highByte)
-
-        return NativeUsbLib.setDeviceVolume(fd, volumeBytes)
     }
 }
